@@ -1,0 +1,31 @@
+/*
+creating ddl to store crm and erp data in the bronze LAYER
+
+*/
+
+---Creating table to get cust_info 
+
+create table bronze.crm_cust_info (cst_id int,cst_key	nvarchar(50),cst_firstname	varchar(40),
+									cst_lastname varchar(50),cst_marital_status	varchar(10),
+									cst_gndr varchar(10), cst_create_date date
+);
+
+---Creating table to get prod_info 
+
+create table bronze.crm_prd_info (prd_id int,	prd_key nvarchar(50),	
+									prd_nm	nvarchar(50),
+									prd_cost int,	prd_line	int,prd_start_dt date,
+									prd_end_dt date
+
+);
+
+---Creating table to get crm sales data
+
+create table bronze.crm_sales_details (sls_ord_num nvarchar(50),sls_prd_key nvarchar(50),
+										sls_cust_id	int,sls_order_dt int,
+										sls_ship_dt int,sls_due_dt	int,
+										sls_sales int,sls_quantity int,sls_price int
+
+
+);
+
