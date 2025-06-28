@@ -26,6 +26,27 @@ create table bronze.crm_sales_details (sls_ord_num nvarchar(50),sls_prd_key nvar
 										sls_ship_dt int,sls_due_dt	int,
 										sls_sales int,sls_quantity int,sls_price int
 
-
 );
+
+---Creating table to get erp loc data
+
+create table bronze.erp_loc_a101 
+			(cid nvarchar(50),country nvarchar(50))
+
+---Creating table to get erp category details data
+
+create table bronze.erp_px_cat_g1v2(
+			id nvarchar(50),cat varchar(50),
+			subcat nvarchar(50),maintenance varchar (50)
+			);
+
+---Creating table to get erp cust data
+
+CREATE TABLE bronze.erp_cust_az12 (
+    cid    NVARCHAR(50),
+    bdate  DATE,
+    gen    NVARCHAR(50)
+);
+
+select * from bronze.erp_px_cat_g1v2
 
