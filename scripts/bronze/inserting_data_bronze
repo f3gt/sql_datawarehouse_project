@@ -1,0 +1,137 @@
+/*
+Creating store procedure to truncate and insert data into the bronze layer from csv file
+*/
+
+
+
+CREATE or alter PROCEDURE bronze.load_bronze AS
+BEGIN
+	declare @start_time datetime ,@end_time datetime,@batch_start datetime, @batch_end  datetime
+	begin try
+		set @batch_start = GETDATE()
+
+		print('=========================')
+		print('Loading Bronze Layer')
+		print('=========================')
+		--- Loading crm.cust_info in table
+		set @start_time = GETDATE()
+
+		print('-------------------------')
+		print('truncating crm.cust_info')
+		truncate table bronze.crm_cust_info
+		print('inserting crm.cust_info')
+		print('-------------------------')
+		BULK INSERT bronze.crm_cust_info
+		from 'C:\Users\Akshay Yadav\Downloads\datasets\source_crm\cust_info.csv'
+		with (
+			firstrow = 2,
+			fieldterminator = ',',
+			tablock 
+		);
+		set @end_time = GETDATE()
+		print '>>' + cast(datediff(second,@end_time,@start_time) as nvarchar(10)) +'second'
+
+		--- Loading crm.cust_info in table
+
+		set @start_time = GETDATE()
+		print('-------------------------')
+		print('truncating crm.prd_info')
+		truncate table bronze.crm_prd_info
+		print('inserting crm.prd_info')
+		BULK INSERT bronze.crm_prd_info
+		from 'C:\Users\Akshay Yadav\Downloads\datasets\source_crm\prd_info.csv'
+		with (
+			firstrow = 2,
+			fieldterminator = ',',
+			tablock 
+		);
+		set @end_time = GETDATE()
+		print '>>' + cast(datediff(second,@end_time,@start_time) as nvarchar(10)) +'second'
+		print('-------------------------')
+
+
+		--- Loading crm.sales_details in table
+
+		set @start_time = GETDATE()
+		print('-------------------------')
+		print('truncating crm.sales_details')
+		truncate table bronze.crm_sales_details
+		print('inserting crm.sales_details')
+		BULK INSERT bronze.crm_sales_details
+		from 'C:\Users\Akshay Yadav\Downloads\datasets\source_crm\sales_details.csv'
+		with(
+			firstrow = 2,
+			fieldterminator = ',',
+			tablock
+		)
+		set @end_time = GETDATE()
+		print '>>' + cast(datediff(second,@end_time,@start_time) as nvarchar(10)) +'second'
+
+
+		--- Loading erp location in table
+
+		set @start_time = GETDATE()
+		print('-------------------------')
+		print('truncating erp_loc_a101')
+		truncate table bronze.erp_loc_a101
+		print('truncating erp_loc_a101')
+		BULK INSERT bronze.erp_loc_a101
+		from 'C:\Users\Akshay Yadav\Downloads\datasets\source_erp\LOC_A101.csv'
+		with(
+			firstrow = 2,
+			fieldterminator = ',',
+			tablock
+		)
+		set @end_time = GETDATE()
+		print '>>' + cast(datediff(second,@end_time,@start_time) as nvarchar(10)) +'second'
+
+		--- Loading erp CUST DATA in table
+
+		set @start_time = GETDATE()
+		print('-------------------------')
+		print('truncating erp_cust_az12')
+		truncate table bronze.erp_cust_az1
+		print('truncating erp_cust_az12')
+		BULK INSERT bronze.erp_cust_az12
+		from 'C:\Users\Akshay Yadav\Downloads\datasets\source_erp\CUST_AZ12.csv'
+		with(
+			firstrow = 2,
+			fieldterminator = ',',
+			tablock
+		)
+		print('-------------------------')
+		set @end_time = GETDATE()
+		print '>>' + cast(datediff(second,@end_time,@start_time) as nvarchar(10)) +'second'
+
+		--- Loading erp PRODUCT CATEGORY in table
+
+		set @start_time = GETDATE()
+		print('-------------------------')
+		print('truncating erp_px_cat_g1v2')
+		truncate table bronze.erp_px_cat_g1v2
+		print('truncating erp_px_cat_g1v2')
+		BULK INSERT bronze.erp_px_cat_g1v2
+		from 'C:\Users\Akshay Yadav\Downloads\datasets\source_erp\PX_CAT_G1V2.csv'
+		with(
+			firstrow = 2,
+			fieldterminator = ',',
+			tablock
+		)
+		set @end_time = GETDATE()
+		print '>>' + cast(datediff(second,@end_time,@start_time) as nvarchar(10)) +'second'
+		print('-------------------------')
+
+		set @batch_end = GETDATE()
+		print('=========================')
+		print('Loading Bronze Layer completed')
+		print '>> Batch Duration ' + cast(datediff(second,@batch_start,@batch_end) as nvarchar(10)) +'second'
+		print('=========================')
+	end try
+	begin catch
+		print '======================'
+		print 'Error Message' + ERROR_MESSAGE();
+		print 'Error Message' + CAST(ERROR_NUMBER() AS NVARCHAR);
+		print 'Error Message' + CAST(ERROR_STATE() AS NVARCHAR);
+		print '======================'
+	END CATCH
+END
