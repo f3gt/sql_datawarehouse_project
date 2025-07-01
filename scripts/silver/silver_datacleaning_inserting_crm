@@ -1,5 +1,7 @@
 /*
 cleaning data
+handling invalid data
+casting datatype to correct data type
 checking for missing values in the table from the bronze layer
 standarization of data
 handing wrong date type 
