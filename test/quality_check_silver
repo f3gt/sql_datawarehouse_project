@@ -1,0 +1,61 @@
+--- expectation
+
+select cst_firstname from silver.crm_cust_info
+where cst_firstname!= TRIM(cst_firstname)
+
+
+----Data Standarisation & consistency
+
+select distinct(cst_marital_status) from silver.crm_cust_info
+
+select distinct(cst_gndr) from silver.crm_cust_info
+
+select * from bronze.crm_prd_info
+
+---check for null or Negative numbers
+---Expectation: no result
+
+select prd_cost from silver.crm_prd_info
+where prd_cost is null or prd_cost < 0
+
+select distinct(prd_line) from silver.crm_prd_info
+where prd_cost is null or prd_cost < 0
+
+---check for negative date
+
+select sls_due_dt from bronze.crm_sales_details
+where  LEN(sls_due_dt) != 8
+
+select * from bronze.crm_sales_details
+where sls_order_dt> sls_ship_dt  or sls_due_dt<sls_ship_dt
+
+select * from silver.crm_sales_details
+where sls_sales != sls_quantity*sls_price
+
+---Check for cst_key correction handle the values 
+select * from silver.erp_cust_az12
+where case when cid like 'NAS%' 
+		then SUBSTRING(cid,4,LEN(cid))
+		else cid end  not in (select distinct(cst_key) from silver.crm_cust_info )
+
+select *,case when gen Is null
+		THEN 'n/a' else gen end from silver.erp_cust_az12
+where gen is null
+
+---- standarized the erp_loc data cehck nulls
+
+	select * from(
+	select cid,ROW_NUMBER() over(partition by cid order by cid) flag_ran from bronze.erp_loc_a101
+	) s
+	where flag_ran = 1
+
+
+select * from silver.erp_loc_a101
+where country is null
+
+---checking for the unwanted spaces
+
+select * from bronze.erp_px_cat_g1v2
+where cat != TRIM(cat) or subcat != TRIM(subcat)
+
+select distinct subcat from bronze.erp_px_cat_g1v2
